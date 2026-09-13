@@ -1,7 +1,7 @@
 # Place Notes
 
 Tie notes to places on a world map. Works entirely offline, on desktop
-and mobile. Simple, unopiniated and markdown-native.
+and mobile. Simple, unopinionated and markdown-native.
 
 ![The map view](docs/screenshot.png)
 
