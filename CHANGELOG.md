@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/Michael-JB/place-notes/compare/0.1.1...0.1.2) (2026-09-13)
+
+
+### Features
+
+* make the country and coordinates property names configurable ([ba0f60b](https://github.com/Michael-JB/place-notes/commit/ba0f60b2b579fcfc6312af8d6e7c0781c33402c5))
+
 ## [0.1.1](https://github.com/Michael-JB/place-notes/compare/0.1.0...0.1.1) (2026-09-13)
 
 
