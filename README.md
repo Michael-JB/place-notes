@@ -1,7 +1,7 @@
 # Place Notes
 
-An Obsidian plugin that lets you tie notes to places on a map. Works
-entirely offline, on desktop and mobile.
+Tie notes to places on a world map. Works entirely offline, on desktop
+and mobile. Simple, unopiniated and markdown-native.
 
 ![The map view](docs/screenshot.png)
 
@@ -16,8 +16,7 @@ coordinates: [38.7169, -9.1399]  # latitude, longitude
 ---
 ```
 
-Nothing else is required: no folders, tags, templates or plugin-owned
-data. Remove the plugin and your notes are exactly as they were.
+The interactive map view lets you easily find and create these notes.
 
 ## Install
 
