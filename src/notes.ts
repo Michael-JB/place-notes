@@ -24,14 +24,16 @@ export async function createPlaceNote(
 
   const folder = await resolveFolder(app, settings.newNoteFolder, contextPath);
   const path = normalizePath(folder ? `${folder}/${name}.md` : `${name}.md`);
-  const file = await app.vault.create(path, frontmatterFor(place));
+  const file = await app.vault.create(path, frontmatterFor(place, settings));
   return { file, created: true };
 }
 
-function frontmatterFor(place: NewPlace): string {
+function frontmatterFor(place: NewPlace, settings: PlaceNotesSettings): string {
   const lines = ["---"];
-  if (place.countryCode) lines.push(`country: ${place.countryCode}`);
-  if (place.coordinates) lines.push(`coordinates: [${place.coordinates.lat}, ${place.coordinates.lon}]`);
+  if (place.countryCode) lines.push(`${settings.countryProperty}: ${place.countryCode}`);
+  if (place.coordinates) {
+    lines.push(`${settings.coordinatesProperty}: [${place.coordinates.lat}, ${place.coordinates.lon}]`);
+  }
   lines.push("---", "");
   return lines.join("\n");
 }
@@ -57,14 +59,20 @@ async function resolveFolder(app: App, configured: string, contextPath: string):
   return wanted;
 }
 
-export async function setCountryOnNote(app: App, file: TFile, code: string): Promise<void> {
+export async function setCountryOnNote(app: App, settings: PlaceNotesSettings, file: TFile, code: string): Promise<void> {
   await app.fileManager.processFrontMatter(file, (fm: Record<string, unknown>) => {
-    fm["country"] = code;
+    fm[settings.countryProperty] = code;
   });
 }
 
-export async function setCoordinatesOnNote(app: App, file: TFile, lat: number, lon: number): Promise<void> {
+export async function setCoordinatesOnNote(
+  app: App,
+  settings: PlaceNotesSettings,
+  file: TFile,
+  lat: number,
+  lon: number,
+): Promise<void> {
   await app.fileManager.processFrontMatter(file, (fm: Record<string, unknown>) => {
-    fm["coordinates"] = [lat, lon];
+    fm[settings.coordinatesProperty] = [lat, lon];
   });
 }

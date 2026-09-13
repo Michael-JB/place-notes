@@ -12,7 +12,7 @@ export default class PlaceNotesPlugin extends Plugin {
 
   override async onload(): Promise<void> {
     await this.loadSettings();
-    this.index = new PlaceIndex(this.app);
+    this.index = new PlaceIndex(this.app, () => this.settings);
 
     this.registerView(VIEW_TYPE_MAP, (leaf) => new PlaceMapView(leaf, this));
     this.addRibbonIcon("map", "Open map", () => void this.openMap());
@@ -90,7 +90,7 @@ export default class PlaceNotesPlugin extends Plugin {
 
   private setCountry(file: TFile): void {
     new CountrySuggestModal(this.app, (country) => {
-      setCountryOnNote(this.app, file, country.code).catch((e) => new Notice(`Could not set country: ${message(e)}`));
+      setCountryOnNote(this.app, this.settings, file, country.code).catch((e) => new Notice(`Could not set country: ${message(e)}`));
     }).open();
   }
 
@@ -103,8 +103,8 @@ export default class PlaceNotesPlugin extends Plugin {
   private async applyCoordinates(file: TFile, picked: PickedPlace): Promise<void> {
     if (picked.kind === "country") return;
     try {
-      await setCoordinatesOnNote(this.app, file, picked.lat, picked.lon);
-      if (picked.kind === "town") await setCountryOnNote(this.app, file, picked.countryCode);
+      await setCoordinatesOnNote(this.app, this.settings, file, picked.lat, picked.lon);
+      if (picked.kind === "town") await setCountryOnNote(this.app, this.settings, file, picked.countryCode);
     } catch (e) {
       new Notice(`Could not set coordinates: ${message(e)}`);
     }

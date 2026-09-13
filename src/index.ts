@@ -1,5 +1,6 @@
 import { App, Events, TFile } from "obsidian";
 import { countryByCode } from "./countries";
+import type { PlaceNotesSettings } from "./settings";
 
 export interface LocatedNote {
   file: TFile;
@@ -23,12 +24,16 @@ export class PlaceIndex extends Events {
   countries = new Map<string, CountryEntry>();
   located: LocatedNote[] = [];
 
-  constructor(private app: App) {
+  constructor(
+    private app: App,
+    private settings: () => PlaceNotesSettings,
+  ) {
     super();
   }
 
   rebuild(): void {
     const cache = this.app.metadataCache;
+    const { countryProperty, coordinatesProperty } = this.settings();
     const countries = new Map<string, CountryEntry>();
     const located: LocatedNote[] = [];
 
@@ -36,10 +41,10 @@ export class PlaceIndex extends Events {
       const fm = cache.getFileCache(file)?.frontmatter;
       if (!fm) continue;
 
-      const loc = parseCoordinatesProperty(fm["coordinates"]);
+      const loc = parseCoordinatesProperty(fm[coordinatesProperty]);
       if (loc) located.push({ file, ...loc });
 
-      const country = countryByCode(fm["country"]);
+      const country = countryByCode(fm[countryProperty]);
       if (country) {
         let entry = countries.get(country.code);
         if (!entry) {
