@@ -1,10 +1,10 @@
 import { ItemView, Keymap, Menu, Platform, TFile, WorkspaceLeaf } from "obsidian";
 import { geoNaturalEarth1, geoPath, type GeoPermissibleObjects, type GeoProjection } from "d3-geo";
 import { select, type Selection } from "d3-selection";
-import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zoom";
+import { zoom, zoomIdentity, type D3ZoomEvent, type ZoomBehavior, type ZoomTransform } from "d3-zoom";
 import { feature } from "topojson-client";
 import type { Topology, GeometryCollection } from "topojson-specification";
-import type { Feature, FeatureCollection, Geometry } from "geojson";
+import type { Feature, Geometry } from "geojson";
 import worldData from "../../data/countries-110m.json";
 import type PlaceNotesPlugin from "../main";
 import type { LocatedNote } from "../index";
@@ -23,7 +23,7 @@ const SPHERE: GeoPermissibleObjects = { type: "Sphere" };
 const DOT_RADIUS = 4;
 
 const topology = worldData as unknown as Topology<{ countries: GeometryCollection<CountryProps> }>;
-const COUNTRIES = feature(topology, topology.objects.countries) as FeatureCollection<Geometry, CountryProps>;
+const COUNTRIES = feature(topology, topology.objects.countries);
 
 export class PlaceMapView extends ItemView {
   private svg!: Selection<SVGSVGElement, unknown, null, undefined>;
@@ -85,7 +85,7 @@ export class PlaceMapView extends ItemView {
 
     this.zoomBehavior = zoom<SVGSVGElement, unknown>()
       .scaleExtent([1, 40])
-      .on("zoom", (event) => {
+      .on("zoom", (event: D3ZoomEvent<SVGSVGElement, unknown>) => {
         this.transform = event.transform;
         this.root.attr("transform", this.transform.toString());
         this.dotsLayer.selectAll("circle").attr("r", DOT_RADIUS / this.transform.k);
@@ -111,7 +111,7 @@ export class PlaceMapView extends ItemView {
     const width = this.contentEl.clientWidth;
     const height = this.contentEl.clientHeight;
     if (!width || !height) {
-      requestAnimationFrame(() => this.layout());
+      this.contentEl.win.requestAnimationFrame(() => this.layout());
       return;
     }
     if (width === this.size.width && height === this.size.height) return;

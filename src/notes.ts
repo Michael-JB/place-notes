@@ -58,13 +58,13 @@ async function resolveFolder(app: App, configured: string, contextPath: string):
 }
 
 export async function setCountryOnNote(app: App, file: TFile, code: string): Promise<void> {
-  await app.fileManager.processFrontMatter(file, (fm) => {
+  await app.fileManager.processFrontMatter(file, (fm: Record<string, unknown>) => {
     fm["country"] = code;
   });
 }
 
 export async function setCoordinatesOnNote(app: App, file: TFile, lat: number, lon: number): Promise<void> {
-  await app.fileManager.processFrontMatter(file, (fm) => {
+  await app.fileManager.processFrontMatter(file, (fm: Record<string, unknown>) => {
     fm["coordinates"] = [lat, lon];
   });
 }
