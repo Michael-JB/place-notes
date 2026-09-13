@@ -13,8 +13,8 @@ import { topology } from "topojson-server";
 
 const OUT = new URL("../data/", import.meta.url).pathname;
 const GEONAMES = "https://download.geonames.org/export/dump/";
-const NATURAL_EARTH =
-  "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_110m_admin_0_countries.geojson";
+const NATURAL_EARTH_TAG = "v5.1.2";
+const NATURAL_EARTH = `https://raw.githubusercontent.com/nvkelso/natural-earth-vector/${NATURAL_EARTH_TAG}/geojson/ne_110m_admin_0_countries.geojson`;
 
 async function fetchText(url) {
   const res = await fetch(url);
@@ -51,7 +51,7 @@ const features = geojson.features.map((f) => {
 const atlas = topology({ countries: { type: "FeatureCollection", features } }, 1e4);
 writeFileSync(join(OUT, "countries-110m.json"), JSON.stringify(atlas));
 console.log(
-  `countries-110m.json: ${features.length} shapes` +
+  `countries-110m.json: ${features.length} shapes from Natural Earth ${NATURAL_EARTH_TAG}` +
     (unmatched.length ? `, no ISO code for: ${unmatched.join(", ")}` : ""),
 );
 
