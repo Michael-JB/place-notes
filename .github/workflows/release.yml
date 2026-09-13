@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - id: release-please
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      - if: ${{ steps.release-please.outputs.release_created }}
+        uses: actions/checkout@v4
+
+      - if: ${{ steps.release-please.outputs.release_created }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+
+      - if: ${{ steps.release-please.outputs.release_created }}
+        name: Build plugin
+        run: |
+          npm ci
+          npm run build
+
+      - if: ${{ steps.release-please.outputs.release_created }}
+        name: Generate artifact attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
+
+      - if: ${{ steps.release-please.outputs.release_created }}
+        name: Upload plugin files to the release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ steps.release-please.outputs.tag_name }}" main.js manifest.json styles.css
