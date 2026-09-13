@@ -1,0 +1,110 @@
+/* Map view */
+
+.place-notes-map-container {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.place-notes-map {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--background-primary);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.place-notes-sphere {
+  fill: var(--background-secondary);
+}
+
+.place-notes-country {
+  fill: var(--background-modifier-border);
+  stroke: var(--background-primary);
+  stroke-width: 0.5px;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+  transition: fill-opacity 120ms ease;
+}
+
+.place-notes-country:hover {
+  fill: var(--background-modifier-border-hover);
+}
+
+.place-notes-country.is-visited {
+  fill: var(--interactive-accent);
+  fill-opacity: 0.6;
+}
+
+.place-notes-country.is-visited:hover {
+  fill-opacity: 0.85;
+}
+
+.place-notes-dot {
+  fill: var(--text-normal);
+  stroke: var(--background-primary);
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+}
+
+.place-notes-dot:hover {
+  fill: var(--text-accent);
+}
+
+.place-notes-tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  padding: 4px 8px;
+  border-radius: var(--radius-s);
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  white-space: nowrap;
+  box-shadow: var(--shadow-s);
+}
+
+/* Set location suggestions */
+
+.place-notes-suggestion-note {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.place-notes-coordinates-input {
+  width: 100%;
+}
+
+/* Empty state and New note button */
+
+.place-notes-empty-hint {
+  position: absolute;
+  left: var(--size-4-4);
+  top: var(--size-4-4);
+  padding: var(--size-4-1) var(--size-4-3);
+  border-radius: var(--radius-m);
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  box-shadow: var(--shadow-s);
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  pointer-events: none;
+}
+
+/* "New note" view action with a text label */
+
+.place-notes-new-note-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-2-2);
+  padding-inline: var(--size-2-3);
+}
+
+.place-notes-new-note-label {
+  font-size: var(--font-ui-small);
+  line-height: 1;
+}
