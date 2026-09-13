@@ -1,7 +1,7 @@
 {
   "id": "place-notes",
   "name": "Place Notes",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "minAppVersion": "1.4.0",
   "description": "Notes tied to places, shown on an offline world map. Pick a country or town, write your tips, and find them again from the map.",
   "author": "Michael Barlow",
