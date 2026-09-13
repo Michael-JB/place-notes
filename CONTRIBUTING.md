@@ -9,6 +9,9 @@ npm run build    # typecheck and production build
 npm run data     # regenerate data/ from upstream sources (needs network)
 ```
 
+The *Update place data* workflow runs `npm run data` monthly and opens a
+pull request when the generated files change.
+
 To try it, symlink or copy `main.js`, `manifest.json` and `styles.css`
 into a vault's `.obsidian/plugins/place-notes/` folder.
 

@@ -1,0 +1,53 @@
+name: Update place data
+
+# Regenerates data/ from GeoNames and Natural Earth once a month and opens a
+# pull request when anything changed. The commit is a user-facing `fix` so it
+# reaches the changelog and triggers a release once merged.
+on:
+  schedule:
+    - cron: "17 6 1 * *" # 06:17 UTC on the 1st of every month
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+
+      - run: npm ci
+
+      - name: Regenerate data
+        run: npm run data | tee "$RUNNER_TEMP/data.log"
+
+      - name: Write the pull request body
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          latest=$(gh api repos/nvkelso/natural-earth-vector/releases/latest --jq .tag_name)
+          {
+            echo "Monthly refresh of the bundled place data from GeoNames and Natural Earth."
+            echo
+            echo '```'
+            cat "$RUNNER_TEMP/data.log"
+            echo '```'
+            echo
+            echo "The latest Natural Earth release is $latest."
+          } > "$RUNNER_TEMP/pr-body.md"
+
+      # Does nothing when data/ is unchanged.
+      - uses: peter-evans/create-pull-request@v8
+        with:
+          add-paths: data
+          branch: update-place-data
+          delete-branch: true
+          commit-message: "fix: update place data"
+          title: "fix: update place data"
+          body-path: ${{ runner.temp }}/pr-body.md
