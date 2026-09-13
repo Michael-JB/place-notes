@@ -20,10 +20,9 @@ The interactive map view lets you easily find and create these notes.
 
 ## Install
 
-Not yet in the community plugin list. To install manually, download
-`main.js`, `manifest.json` and `styles.css` from the latest release into
-`<your vault>/.obsidian/plugins/place-notes/` and enable the plugin in
-Settings -> Community plugins.
+Install [Place Notes](https://community.obsidian.md/plugins/place-notes)
+from Obsidian's community plugin directory, or in Obsidian go to
+Settings -> Community plugins -> Browse and search for "Place Notes".
 
 ## Data and licenses
 
