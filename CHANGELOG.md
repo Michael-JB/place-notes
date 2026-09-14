@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.4](https://github.com/Michael-JB/place-notes/compare/0.1.3...0.1.4) (2026-09-14)
+
+
+### Features
+
+* add any note to the map from its context menu, replacing the set country and set coordinates commands ([56a64b6](https://github.com/Michael-JB/place-notes/commit/56a64b63876eefca22eb171e556e586068e318cf))
+* picking a place that already has a note adds the place properties to it ([d5e86f5](https://github.com/Michael-JB/place-notes/commit/d5e86f5cb8d0ec537b0a33feae5b2d296d2e4c7c))
+
+
+### Bug Fixes
+
+* update map view name ([6103db6](https://github.com/Michael-JB/place-notes/commit/6103db6e0fe9eecb1fbcb1bd3aef17c266980621))
+
 ## [0.1.3](https://github.com/Michael-JB/place-notes/compare/0.1.2...0.1.3) (2026-09-14)
 
 
