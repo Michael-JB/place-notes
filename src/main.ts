@@ -72,8 +72,9 @@ export default class PlaceNotesPlugin extends Plugin {
   private async createAndOpen(place: NewPlace): Promise<void> {
     try {
       const context = this.app.workspace.getActiveFile()?.path ?? "";
-      const { file, created } = await createPlaceNote(this.app, this.settings, place, context);
-      if (!created) new Notice(`Opened existing note "${file.basename}"`);
+      const { file, outcome } = await createPlaceNote(this.app, this.settings, place, context);
+      if (outcome === "adopted") new Notice(`Added place properties to existing note "${file.basename}"`);
+      if (outcome === "existing") new Notice(`Opened existing place note "${file.basename}"`);
       await this.app.workspace.getLeaf("tab").openFile(file);
     } catch (e) {
       new Notice(`Could not create place note: ${message(e)}`);
