@@ -68,7 +68,8 @@ export default class PlaceNotesPlugin extends Plugin {
   newPlace(countryCode?: string): void {
     new PlacePicker(this.app, { countries: true, countryCode }, (picked) => {
       if (picked.kind === "coordinates") {
-        new NameModal(this.app, (name) => void this.createAndOpen({ name, countryCode, coordinates: picked })).open();
+        const place = { countryCode: picked.countryCode, coordinates: { lat: picked.lat, lon: picked.lon } };
+        new NameModal(this.app, (name) => void this.createAndOpen({ name, ...place })).open();
         return;
       }
       void this.createAndOpen(toNewPlace(picked));
@@ -98,7 +99,10 @@ export default class PlaceNotesPlugin extends Plugin {
   /** Writes place properties into an existing note so it shows on the map. */
   private addToMap(file: TFile): void {
     new PlacePicker(this.app, { countries: true, placeholder: `Add "${file.basename}" to: country, city or town…` }, (picked) => {
-      const place = picked.kind === "coordinates" ? { coordinates: picked } : toNewPlace(picked);
+      const place =
+        picked.kind === "coordinates"
+          ? { countryCode: picked.countryCode, coordinates: { lat: picked.lat, lon: picked.lon } }
+          : toNewPlace(picked);
       applyPlace(this.app, this.settings, file, place).catch((e) => new Notice(`Could not add to map: ${message(e)}`));
     }).open();
   }

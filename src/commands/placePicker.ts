@@ -1,6 +1,16 @@
-import { App, ButtonComponent, FuzzyMatch, FuzzySuggestModal, Modal, Notice, TextComponent } from "obsidian";
+import {
+  AbstractInputSuggest,
+  App,
+  ButtonComponent,
+  FuzzyMatch,
+  FuzzySuggestModal,
+  Modal,
+  Notice,
+  prepareFuzzySearch,
+  TextComponent,
+} from "obsidian";
 import citiesData from "../../data/cities.json";
-import { COUNTRIES, countryByCode, type Country } from "../countries";
+import { COUNTRIES, countryByCode, countryByNameOrCode, type Country } from "../countries";
 
 /** name, ascii name (or ""), country code, lat, lon, population */
 type CityRow = [string, string, string, number, number, number];
@@ -10,7 +20,7 @@ const CITIES = citiesData as CityRow[];
 export type PickedPlace =
   | { kind: "country"; country: Country }
   | { kind: "town"; name: string; countryCode: string; lat: number; lon: number }
-  | { kind: "coordinates"; lat: number; lon: number };
+  | { kind: "coordinates"; lat: number; lon: number; countryCode?: string };
 
 type Item = { kind: "manual" } | { kind: "country"; country: Country } | { kind: "town"; row: CityRow };
 
@@ -29,6 +39,7 @@ export interface PlacePickerOptions {
 export class PlacePicker extends FuzzySuggestModal<Item> {
   private items: Item[];
   private pinned: FuzzyMatch<Item>[];
+  private countryCode?: string;
 
   constructor(
     app: App,
@@ -38,6 +49,7 @@ export class PlacePicker extends FuzzySuggestModal<Item> {
     super(app);
     this.limit = 50;
     const only = options.countryCode;
+    this.countryCode = only;
     const onlyName = only ? countryByCode(only)?.name ?? only : undefined;
     this.setPlaceholder(
       options.placeholder ?? (onlyName ? `City or town in ${onlyName}…` : "Country, city or town…"),
@@ -109,7 +121,9 @@ export class PlacePicker extends FuzzySuggestModal<Item> {
   onChooseItem(item: Item): void {
     switch (item.kind) {
       case "manual":
-        new CoordinatesModal(this.app, (lat, lon) => this.onPick({ kind: "coordinates", lat, lon })).open();
+        new CoordinatesModal(this.app, this.countryCode, (lat, lon, countryCode) =>
+          this.onPick({ kind: "coordinates", lat, lon, countryCode }),
+        ).open();
         break;
       case "country":
         this.onPick({ kind: "country", country: item.country });
@@ -138,7 +152,8 @@ export function parseCoordinates(text: string): { lat: number; lon: number } | n
 class CoordinatesModal extends Modal {
   constructor(
     app: App,
-    private onPick: (lat: number, lon: number) => void,
+    private initialCountryCode: string | undefined,
+    private onPick: (lat: number, lon: number, countryCode?: string) => void,
   ) {
     super(app);
   }
@@ -151,19 +166,34 @@ class CoordinatesModal extends Modal {
     const input = new TextComponent(contentEl).setPlaceholder("latitude, longitude");
     input.inputEl.addClass("place-notes-coordinates-input");
 
+    contentEl.createEl("p", { text: "Country (optional)" });
+    const countryInput = new TextComponent(contentEl).setPlaceholder("Start typing a country…");
+    countryInput.inputEl.addClass("place-notes-coordinates-input");
+    const initial = countryByCode(this.initialCountryCode);
+    if (initial) countryInput.setValue(initial.name);
+    new CountryInputSuggest(this.app, countryInput.inputEl);
+
     const submit = () => {
       const coords = parseCoordinates(input.getValue());
       if (!coords) {
         new Notice("Could not read coordinates. Use latitude, longitude.");
         return;
       }
+      const countryText = countryInput.getValue().trim();
+      const country = countryByNameOrCode(countryText);
+      if (countryText && !country) {
+        new Notice(`Unknown country "${countryText}". Pick one from the suggestions or leave it empty.`);
+        return;
+      }
       this.close();
-      this.onPick(coords.lat, coords.lon);
+      this.onPick(coords.lat, coords.lon, country?.code);
     };
 
-    input.inputEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") submit();
-    });
+    for (const el of [input.inputEl, countryInput.inputEl]) {
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.isComposing) submit();
+      });
+    }
 
     const buttons = contentEl.createDiv({ cls: "modal-button-container" });
     new ButtonComponent(buttons).setButtonText("OK").setCta().onClick(submit);
@@ -173,6 +203,33 @@ class CoordinatesModal extends Modal {
 
   override onClose(): void {
     this.contentEl.empty();
+  }
+}
+
+/** Inline country suggestions for a text input. */
+class CountryInputSuggest extends AbstractInputSuggest<Country> {
+  constructor(
+    app: App,
+    private input: HTMLInputElement,
+  ) {
+    super(app, input);
+    this.limit = 8;
+  }
+
+  protected getSuggestions(query: string): Country[] {
+    const search = prepareFuzzySearch(query);
+    return COUNTRIES.filter((c) => search(`${c.name} ${c.code}`) !== null);
+  }
+
+  renderSuggestion(country: Country, el: HTMLElement): void {
+    el.createDiv({ text: country.name });
+    el.createDiv({ cls: "place-notes-suggestion-note", text: country.code });
+  }
+
+  override selectSuggestion(country: Country): void {
+    this.setValue(country.name);
+    this.input.dispatchEvent(new Event("input"));
+    this.close();
   }
 }
 
