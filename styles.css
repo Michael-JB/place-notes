@@ -108,3 +108,13 @@
   font-size: var(--font-ui-small);
   line-height: 1;
 }
+
+/* Mobile renders view actions as round icon buttons: icon only there. */
+.is-mobile .place-notes-new-note-action {
+  gap: 0;
+  padding-inline: 0;
+}
+
+.is-mobile .place-notes-new-note-label {
+  display: none;
+}
