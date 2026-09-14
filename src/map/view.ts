@@ -69,7 +69,10 @@ export class PlaceMapView extends ItemView {
     this.dotsLayer = this.root.append("g");
     this.tooltip = container.createDiv({ cls: "place-notes-tooltip" });
     this.tooltip.hide();
-    this.emptyHint = container.createDiv({ cls: "place-notes-empty-hint", text: "No place notes yet. Tap a country, or use New place note above." });
+    this.emptyHint = container.createDiv({
+      cls: "place-notes-empty-hint",
+      text: "No place notes yet. Tap a country, or press +.",
+    });
 
     const action = this.addAction("plus", "New place note", () => this.plugin.newPlace());
     action.addClass("place-notes-new-note-action");
