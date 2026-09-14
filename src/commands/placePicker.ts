@@ -40,7 +40,7 @@ export class PlacePicker extends FuzzySuggestModal<Item> {
     const only = options.countryCode;
     const onlyName = only ? countryByCode(only)?.name ?? only : undefined;
     this.setPlaceholder(
-      options.placeholder ?? (onlyName ? `Town or city in ${onlyName}…` : "Where? Country, town or city…"),
+      options.placeholder ?? (onlyName ? `City or town in ${onlyName}…` : "Country, city or town…"),
     );
     const countries = only ? COUNTRIES.filter((c) => c.code === only) : COUNTRIES;
     const towns = only ? CITIES.filter((row) => row[2] === only) : CITIES;

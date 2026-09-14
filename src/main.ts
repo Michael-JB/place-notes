@@ -95,7 +95,7 @@ export default class PlaceNotesPlugin extends Plugin {
   }
 
   private setCoordinates(file: TFile): void {
-    new PlacePicker(this.app, { countries: false, placeholder: "Town or city…" }, (picked) => {
+    new PlacePicker(this.app, { countries: false, placeholder: "City or town…" }, (picked) => {
       void this.applyCoordinates(file, picked);
     }).open();
   }
