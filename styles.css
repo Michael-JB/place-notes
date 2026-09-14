@@ -50,6 +50,7 @@
   }
 
   .place-notes-country.is-visited:hover {
+    fill: var(--interactive-accent);
     fill-opacity: 0.85;
   }
 
