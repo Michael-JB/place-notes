@@ -17,6 +17,7 @@ coordinates: [38.7169, -9.1399]  # latitude, longitude
 ```
 
 The interactive map view lets you easily find and create these notes.
+Existing notes join the map via *Add to map* in their context menu.
 
 ## Install
 

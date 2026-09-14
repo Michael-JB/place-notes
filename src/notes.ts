@@ -84,21 +84,3 @@ async function resolveFolder(app: App, configured: string, contextPath: string):
   await app.vault.createFolder(wanted);
   return wanted;
 }
-
-export async function setCountryOnNote(app: App, settings: PlaceNotesSettings, file: TFile, code: string): Promise<void> {
-  await app.fileManager.processFrontMatter(file, (fm: Record<string, unknown>) => {
-    fm[settings.countryProperty] = code;
-  });
-}
-
-export async function setCoordinatesOnNote(
-  app: App,
-  settings: PlaceNotesSettings,
-  file: TFile,
-  lat: number,
-  lon: number,
-): Promise<void> {
-  await app.fileManager.processFrontMatter(file, (fm: Record<string, unknown>) => {
-    fm[settings.coordinatesProperty] = [lat, lon];
-  });
-}

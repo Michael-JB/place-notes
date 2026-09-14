@@ -1,9 +1,8 @@
 import { debounce, MarkdownView, Notice, Plugin, TFile, WorkspaceLeaf } from "obsidian";
-import { CountrySuggestModal } from "./commands/setCountry";
 import { NameModal, PlacePicker, type PickedPlace } from "./commands/placePicker";
 import { PlaceIndex } from "./index";
 import { PlaceMapView, VIEW_TYPE_MAP } from "./map/view";
-import { createPlaceNote, setCountryOnNote, setCoordinatesOnNote, type NewPlace } from "./notes";
+import { applyPlace, createPlaceNote, type NewPlace } from "./notes";
 import { PlaceNotesSettingTab, DEFAULT_SETTINGS, type PlaceNotesSettings } from "./settings";
 
 export default class PlaceNotesPlugin extends Plugin {
@@ -31,16 +30,23 @@ export default class PlaceNotesPlugin extends Plugin {
     });
 
     this.addCommand({
-      id: "set-country",
-      name: "Set country of current note",
-      checkCallback: (checking) => this.withActiveNote(checking, (file) => this.setCountry(file)),
+      id: "add-to-map",
+      name: "Add to map",
+      checkCallback: (checking) => this.withActiveNote(checking, (file) => this.addToMap(file)),
     });
 
-    this.addCommand({
-      id: "set-coordinates",
-      name: "Set coordinates of current note",
-      checkCallback: (checking) => this.withActiveNote(checking, (file) => this.setCoordinates(file)),
-    });
+    // Right-click on a note in the file explorer, and the note's "more options" menu.
+    this.registerEvent(
+      this.app.workspace.on("file-menu", (menu, file) => {
+        if (!(file instanceof TFile) || file.extension !== "md") return;
+        menu.addItem((item) =>
+          item
+            .setTitle("Add to map")
+            .setIcon("map-pin")
+            .onClick(() => this.addToMap(file)),
+        );
+      }),
+    );
 
     const rebuild = debounce(() => this.index.rebuild(), 200, true);
     this.app.workspace.onLayoutReady(() => {
@@ -89,26 +95,12 @@ export default class PlaceNotesPlugin extends Plugin {
     return true;
   }
 
-  private setCountry(file: TFile): void {
-    new CountrySuggestModal(this.app, (country) => {
-      setCountryOnNote(this.app, this.settings, file, country.code).catch((e) => new Notice(`Could not set country: ${message(e)}`));
+  /** Writes place properties into an existing note so it shows on the map. */
+  private addToMap(file: TFile): void {
+    new PlacePicker(this.app, { countries: true, placeholder: `Add "${file.basename}" to: country, city or town…` }, (picked) => {
+      const place = picked.kind === "coordinates" ? { coordinates: picked } : toNewPlace(picked);
+      applyPlace(this.app, this.settings, file, place).catch((e) => new Notice(`Could not add to map: ${message(e)}`));
     }).open();
-  }
-
-  private setCoordinates(file: TFile): void {
-    new PlacePicker(this.app, { countries: false, placeholder: "City or town…" }, (picked) => {
-      void this.applyCoordinates(file, picked);
-    }).open();
-  }
-
-  private async applyCoordinates(file: TFile, picked: PickedPlace): Promise<void> {
-    if (picked.kind === "country") return;
-    try {
-      await setCoordinatesOnNote(this.app, this.settings, file, picked.lat, picked.lon);
-      if (picked.kind === "town") await setCountryOnNote(this.app, this.settings, file, picked.countryCode);
-    } catch (e) {
-      new Notice(`Could not set coordinates: ${message(e)}`);
-    }
   }
 
   async loadSettings(): Promise<void> {
