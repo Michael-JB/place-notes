@@ -16,6 +16,11 @@ const GEONAMES = "https://download.geonames.org/export/dump/";
 const NATURAL_EARTH_TAG = "v5.1.2";
 const NATURAL_EARTH = `https://raw.githubusercontent.com/nvkelso/natural-earth-vector/${NATURAL_EARTH_TAG}/geojson/ne_110m_admin_0_countries.geojson`;
 
+// One row per line so that pull request diffs read as added and removed places.
+function rows(list) {
+  return `[\n${list.map((r) => JSON.stringify(r)).join(",\n")}\n]\n`;
+}
+
 async function fetchText(url) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`${url}: ${res.status}`);
@@ -34,7 +39,7 @@ const countries = countryInfo
   .sort((a, b) => a.name.localeCompare(b.name));
 const codeSet = new Set(countries.map((c) => c.code));
 
-writeFileSync(join(OUT, "countries.json"), JSON.stringify(countries));
+writeFileSync(join(OUT, "countries.json"), rows(countries));
 console.log(`countries.json: ${countries.length} countries`);
 
 // --- world map ------------------------------------------------------------
@@ -80,5 +85,5 @@ const cities = readFileSync(join(tmp, "cities15000.txt"), "utf8")
   ])
   .sort((a, b) => b[5] - a[5]);
 
-writeFileSync(join(OUT, "cities.json"), JSON.stringify(cities));
+writeFileSync(join(OUT, "cities.json"), rows(cities));
 console.log(`cities.json: ${cities.length} places`);
