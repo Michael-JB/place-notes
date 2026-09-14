@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/Michael-JB/place-notes/compare/0.1.4...0.1.5) (2026-09-14)
+
+
+### Bug Fixes
+
+* shaded countries stay shaded while hovered ([e177c05](https://github.com/Michael-JB/place-notes/commit/e177c05708b5c44ce83dcc2abdcb359142171d57))
+
 ## [0.1.4](https://github.com/Michael-JB/place-notes/compare/0.1.3...0.1.4) (2026-09-14)
 
 
