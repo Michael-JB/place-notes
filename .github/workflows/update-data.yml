@@ -25,22 +25,22 @@ jobs:
       - run: npm ci
 
       - name: Regenerate data
-        run: npm run data | tee "$RUNNER_TEMP/data.log"
+        run: npm run --silent data | tee "$RUNNER_TEMP/data.log"
 
       - name: Write the pull request body
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          pinned=$(grep -o 'Natural Earth v[0-9.]*' "$RUNNER_TEMP/data.log" | cut -d' ' -f3)
           latest=$(gh api repos/nvkelso/natural-earth-vector/releases/latest --jq .tag_name)
-          {
-            echo "Monthly refresh of the bundled place data from GeoNames and Natural Earth."
-            echo
-            echo '```'
-            cat "$RUNNER_TEMP/data.log"
-            echo '```'
-            echo
-            echo "The latest Natural Earth release is $latest."
-          } > "$RUNNER_TEMP/pr-body.md"
+          if [ "$latest" = "$pinned" ]; then
+            map="World map: up to date."
+          else
+            map="World map: newer shapes are available ($latest). Not included here; needs a manual update."
+          fi
+          printf '%s\n\n%s\n' \
+            "Monthly refresh of the country and city lists. Review the diff and merge." \
+            "$map" > "$RUNNER_TEMP/pr-body.md"
 
       # Does nothing when data/ is unchanged.
       - uses: peter-evans/create-pull-request@v8
