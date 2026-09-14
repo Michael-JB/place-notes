@@ -50,7 +50,7 @@ export class PlaceMapView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "Places";
+    return "Map";
   }
 
   override getIcon(): string {
