@@ -29,17 +29,9 @@
   transition: fill-opacity 120ms ease;
 }
 
-.place-notes-country:hover {
-  fill: var(--background-modifier-border-hover);
-}
-
 .place-notes-country.is-visited {
   fill: var(--interactive-accent);
   fill-opacity: 0.6;
-}
-
-.place-notes-country.is-visited:hover {
-  fill-opacity: 0.85;
 }
 
 .place-notes-dot {
@@ -50,8 +42,20 @@
   cursor: pointer;
 }
 
-.place-notes-dot:hover {
-  fill: var(--text-accent);
+/* Hover styles only where a hovering pointer exists; touch screens would
+   otherwise keep the last tapped country highlighted. */
+@media (hover: hover) {
+  .place-notes-country:hover {
+    fill: var(--background-modifier-border-hover);
+  }
+
+  .place-notes-country.is-visited:hover {
+    fill-opacity: 0.85;
+  }
+
+  .place-notes-dot:hover {
+    fill: var(--text-accent);
+  }
 }
 
 .place-notes-tooltip {
