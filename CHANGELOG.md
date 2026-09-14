@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.6](https://github.com/Michael-JB/place-notes/compare/0.1.5...0.1.6) (2026-09-14)
+
+
+### Features
+
+* optionally choose a country when entering coordinates by hand ([5fce504](https://github.com/Michael-JB/place-notes/commit/5fce504057a2f18de4db156614a3cb443ede3824))
+
+
+### Bug Fixes
+
+* update place data ([349cdfe](https://github.com/Michael-JB/place-notes/commit/349cdfe00dadbf4df677c33ea46f84b618ef7736))
+
 ## [0.1.5](https://github.com/Michael-JB/place-notes/compare/0.1.4...0.1.5) (2026-09-14)
 
 
