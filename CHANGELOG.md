@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/Michael-JB/place-notes/compare/0.1.6...0.1.7) (2026-10-07)
+
+
+### Bug Fixes
+
+* update place data ([70d85e0](https://github.com/Michael-JB/place-notes/commit/70d85e06de5d3c44888a18d5ada10bd2cc7b7b20))
+
 ## [0.1.6](https://github.com/Michael-JB/place-notes/compare/0.1.5...0.1.6) (2026-09-14)
 
 
